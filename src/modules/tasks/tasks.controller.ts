@@ -1,24 +1,31 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, UseInterceptors } from '@nestjs/common'
 import { TasksService } from './tasks.service'
+import { TaskDTO } from './tasks.dto'
+import { ValidateResourcesIdsInterceptor } from '../../common/interceptors/validate-resources-ids.interceptor'
+import { ValidateResourcesIds } from '../../common/decorators/validate-resources-ids.decorator'
 
 @Controller({
   version: '1',
   path: 'projects/:projectId/tasks',
 })
+@UseInterceptors(ValidateResourcesIdsInterceptor)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
+  @ValidateResourcesIds()
   findAllByProject(@Param('projectId', ParseUUIDPipe) projectId: string) {
     return this.tasksService.findAllByProject(projectId)
   }
 
   @Post()
-  create(@Param('projectId', ParseUUIDPipe) projectId: string, @Body() data: any) {
+  @ValidateResourcesIds()
+  create(@Param('projectId', ParseUUIDPipe) projectId: string, @Body() data: TaskDTO) {
     return this.tasksService.create(projectId, data)
   }
 
   @Get(':taskId')
+  @ValidateResourcesIds()
   findOne(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('taskId', ParseUUIDPipe) taskId: string
@@ -27,15 +34,18 @@ export class TasksController {
   }
 
   @Put(':taskId')
+  @ValidateResourcesIds()
   update(
     @Param(':projectId', ParseUUIDPipe) projectId: string,
     @Param('taskId', ParseUUIDPipe) taskId: string,
-    @Body() data: any
+    @Body() data: TaskDTO
   ){
     return this.tasksService.update(projectId,taskId,data)
   }
 
   @Delete(':taskId')
+  @ValidateResourcesIds()
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param('projectID', ParseUUIDPipe) projectId: string,
     @Param('taskId', ParseUUIDPipe) taskId: string
