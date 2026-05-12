@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Param,
   ParseUUIDPipe,
@@ -13,10 +12,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { ProjectListItemDTO, ProjectRequestDTO } from './projects.dto'
-import { ProjectsService } from './projects.service'
 import { ValidateResourcesIds } from '../../common/decorators/validate-resources-ids.decorator'
 import { ValidateResourcesIdsInterceptor } from '../../common/interceptors/validate-resources-ids.interceptor'
+import { ProjectFullDTO, ProjectListItemDTO, ProjectRequestDTO } from './projects.dto'
+import { ProjectsService } from './projects.service'
 
 @Controller({
   version: '1',
@@ -36,7 +35,7 @@ export class ProjectsController {
 
   @Get(':projectId')
   @ApiResponse({
-    type: ProjectListItemDTO,
+    type: ProjectFullDTO,
   })
   @ValidateResourcesIds()
   async findOne(@Param('projectId', ParseUUIDPipe) projectId: string) {
@@ -58,8 +57,10 @@ export class ProjectsController {
     type: ProjectListItemDTO,
   })
   @ValidateResourcesIds()
-  async update(@Param('projectId', ParseUUIDPipe) projectId: string, @Body() data: ProjectRequestDTO) {
-
+  async update(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() data: ProjectRequestDTO,
+  ) {
     return this.projectsService.update(projectId, data)
   }
 
@@ -67,7 +68,6 @@ export class ProjectsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ValidateResourcesIds()
   async remove(@Param('projectId', ParseUUIDPipe) projectId: string) {
-
     return this.projectsService.remove(projectId)
   }
 }
