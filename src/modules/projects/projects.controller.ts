@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
@@ -16,12 +17,14 @@ import { ValidateResourcesIds } from '../../common/decorators/validate-resources
 import { ValidateResourcesIdsInterceptor } from '../../common/interceptors/validate-resources-ids.interceptor'
 import { ProjectFullDTO, ProjectListItemDTO, ProjectRequestDTO } from './projects.dto'
 import { ProjectsService } from './projects.service'
+import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard'
 
 @Controller({
   version: '1',
   path: 'projects',
 })
 @UseInterceptors(ValidateResourcesIdsInterceptor)
+@UseGuards(JwtAuthGuard)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 

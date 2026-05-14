@@ -3,6 +3,8 @@ import { UsersService } from '../users/users.service'
 import { SingInDTO, SingUpDTO } from './auth.dto'
 import { AuthService } from './auth.service'
 import { AuthGuard } from '@nestjs/passport'
+import { AuthenticatedUser } from '../../common/decorators/authenticated-user.decorator'
+import type { User } from '@prisma/client'
 
 @Controller({
   version: '1',
@@ -27,9 +29,10 @@ export class AuthController {
 
   @Get('protected')
   @UseGuards(AuthGuard('jwt'))
-  protected(){
+  protected(@AuthenticatedUser() user: User){
     return {
-      message: 'Authenticated!'
+      message: `Authenticated! ${user.email}`,
     }
   }
 }
+
