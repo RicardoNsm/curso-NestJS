@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger'
@@ -16,12 +17,14 @@ import { ValidateResourcesIds } from '../../common/decorators/validate-resources
 import { ValidateResourcesIdsInterceptor } from '../../common/interceptors/validate-resources-ids.interceptor'
 import { CommentFullDTO, CommentListenDTO, CommentRequestDTO } from './comments.dto'
 import { CommentsService } from './comments.service'
+import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard'
 
 @Controller({
   version: '1',
   path: 'projects/:projectId/tasks/:taskId/comments',
 })
 @UseInterceptors(ValidateResourcesIdsInterceptor)
+@UseGuards(JwtAuthGuard)
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 

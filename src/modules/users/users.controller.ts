@@ -10,15 +10,18 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
 import { CreateUserDTO, UpdateUserDTO, UserFullDTO, UserListemDTO } from './users.dto'
 import { UsersService } from './users.service'
+import { JwtAuthGuard } from '../../common/guards/jwt-auth/jwt-auth.guard'
 
 @Controller({
   version: '1',
   path: 'users',
 })
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
